@@ -279,7 +279,7 @@ bool Bank::bookFirst() {
 void Bank::clear() {
     work([this] {
         unique_lock<mutex> clearLock(clearMutex);
-        clearCV.wait(clearLock, [this] { return queue.size() >= queueOpacity; });
+        clearCV.wait(clearLock, [this] { return queue.size() >= queueOpacity || !workday; });
 
         freeze_lock([this] {
             canceled.fetch_add(queue.size());
@@ -310,6 +310,10 @@ void Bank::continueCashBoxJob() {
         }
 
         while (data->currentSum < data->to.transferCount()) {
+            if(!workday){
+                break;
+            }
+
             checkFreezing();
 
             if (data->currentCheck > queue.size()) {
@@ -323,14 +327,16 @@ void Bank::continueCashBoxJob() {
             data->currentCheck++;
         }
 
-        complete();
+        if(data->currentSum >= data->to.transferCount()) {
+            complete();
+        }
     });
 
     endCashBoxJob();
 }
 
 void Bank::endCashBoxJob() {
-    cout << "cashBox(thread) " << this_thread::get_id() << "terminated" << endl;
+    cout << "cashBox(thread) " << this_thread::get_id() << " terminated" << endl;
     cashBoxCounter.fetch_sub(1);
 }
 
@@ -580,7 +586,7 @@ int main() {
         cashBox.join();
     }
 
-    cout << "terminated correct";
+    cout << endl << "!!!terminated correct!!!";
     return 0;
 }
 
