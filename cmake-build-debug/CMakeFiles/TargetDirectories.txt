@@ -1,0 +1,3 @@
+D:/Users/Aleksey/CLionProjects/multithreading/cmake-build-debug/CMakeFiles/multithreading.dir
+D:/Users/Aleksey/CLionProjects/multithreading/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Users/Aleksey/CLionProjects/multithreading/cmake-build-debug/CMakeFiles/rebuild_cache.dir
